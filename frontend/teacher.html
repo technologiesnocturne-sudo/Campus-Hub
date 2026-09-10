@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facilitator Portal — Campus Hub</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="mark">PC</div>
+      <div>
+        <div class="name">Campus OS</div>
+        <div class="role-tag" id="roleTag">Facilitator</div>
+      </div>
+    </div>
+
+    <nav class="nav-group">
+      <div class="nav-group-label">Overview</div>
+      <div class="nav-link active" data-view="dashboard">Dashboard</div>
+    </nav>
+    <nav class="nav-group">
+      <div class="nav-group-label">Class Work</div>
+      <div class="nav-link" data-view="grades">Upload Grades</div>
+      <div class="nav-link" data-view="attendance">Mark Attendance</div>
+      <div class="nav-link" data-view="materials">Learning Material</div>
+      <div class="nav-link" data-view="assignments">Assignments</div>
+    </nav>
+    <nav class="nav-group" id="hodNavGroup" style="display:none">
+      <div class="nav-group-label">Head of Department</div>
+      <div class="nav-link" data-view="hod">Department Overview</div>
+    </nav>
+    <nav class="nav-group">
+      <div class="nav-group-label">Campus</div>
+      <div class="nav-link" data-view="announcements">Announcements</div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div id="sidebarProfile" class="faint mt-8"></div>
+      <button class="btn btn-ghost btn-block mt-16" onclick="logout()">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view">
+      <div class="topbar"><div><h1 id="welcomeTitle">Welcome back</h1><div class="subtitle" id="deptSubtitle"></div></div></div>
+      <div class="grid grid-3">
+        <div class="panel stat-tile"><div class="stat-label">My Students</div><div class="stat-value accent" id="statStudents">—</div></div>
+        <div class="panel stat-tile"><div class="stat-label">Materials Uploaded</div><div class="stat-value" id="statMaterials">—</div></div>
+        <div class="panel stat-tile"><div class="stat-label">Assignments Set</div><div class="stat-value" id="statAssignments">—</div></div>
+      </div>
+    </section>
+
+    <!-- GRADES -->
+    <section id="view-grades" class="view hidden">
+      <div class="topbar"><div><h1>Upload Grades</h1><div class="subtitle">Enter one student's score, or bulk-import a whole class from a spreadsheet.</div></div></div>
+
+      <div class="grid grid-2">
+        <div class="panel">
+          <div class="sheet-label">FIG. 10 — SINGLE ENTRY</div>
+          <form id="gradeForm">
+            <div class="field">
+              <label for="gStudent">Student</label>
+              <select id="gStudent" required></select>
+            </div>
+            <div class="field">
+              <label for="gSubject">Subject</label>
+              <input id="gSubject" placeholder="e.g. Circuit Theory II" required>
+            </div>
+            <div class="field">
+              <label for="gTerm">Term</label>
+              <select id="gTerm">
+                <option value="2026-S1">2026 — Semester 1</option>
+                <option value="2026-S2">2026 — Semester 2</option>
+                <option value="2025-S2">2025 — Semester 2</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="gScore">Score (0–100)</label>
+              <input id="gScore" type="number" min="0" max="100" required>
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Save grade</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="sheet-label">FIG. 11 — BULK IMPORT (.XLSX)</div>
+          <p class="dim">Columns expected: <code>student_id</code>, <code>subject</code>, <code>term</code>, <code>score</code>. <code>student_id</code> must match the system-issued Student ID (e.g. STU-2026-7F3K9Q).</p>
+          <div class="field mt-16">
+            <label for="xlsxFile">Spreadsheet file</label>
+            <input id="xlsxFile" type="file" accept=".xlsx,.xls">
+          </div>
+          <button class="btn btn-block" id="importBtn">Import spreadsheet</button>
+          <div id="importResult" class="mt-16"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE -->
+    <section id="view-attendance" class="view hidden">
+      <div class="topbar"><div><h1>Mark Attendance</h1><div class="subtitle">One row per student, for the selected date.</div></div></div>
+      <div class="panel">
+        <div class="field" style="max-width:220px">
+          <label for="attDate">Date</label>
+          <input id="attDate" type="date">
+        </div>
+        <div class="table-wrap mt-16"><table>
+          <thead><tr><th>Student</th><th>ID</th><th>Status</th></tr></thead>
+          <tbody id="attendanceTableBody"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- MATERIALS -->
+    <section id="view-materials" class="view hidden">
+      <div class="topbar"><div><h1>Learning Material</h1><div class="subtitle">Visible to every student in your department.</div></div></div>
+      <div class="panel">
+        <div class="sheet-label">FIG. 12 — UPLOAD</div>
+        <form id="materialForm" class="grid grid-2" style="align-items:end">
+          <div class="field" style="margin-bottom:0"><label for="matTitle">Title</label><input id="matTitle" required placeholder="Week 4 — Circuit Diagrams"></div>
+          <div class="field" style="margin-bottom:0"><label for="matFile">File</label><input id="matFile" type="file" required></div>
+          <button class="btn btn-primary" style="grid-column:1/-1" type="submit">Upload material</button>
+        </form>
+      </div>
+      <div class="grid grid-2 mt-24" id="materialsGrid"></div>
+    </section>
+
+    <!-- ASSIGNMENTS -->
+    <section id="view-assignments" class="view hidden">
+      <div class="topbar"><div><h1>Assignments</h1><div class="subtitle">Project work, assessments, and additional notes for your department.</div></div></div>
+      <div class="panel">
+        <div class="sheet-label">FIG. 13 — NEW ASSIGNMENT</div>
+        <form id="assignmentForm">
+          <div class="grid grid-2">
+            <div class="field"><label for="asgTitle">Title</label><input id="asgTitle" required></div>
+            <div class="field"><label for="asgDue">Due date</label><input id="asgDue" type="date"></div>
+          </div>
+          <div class="field"><label for="asgDesc">Description</label><textarea id="asgDesc" rows="3"></textarea></div>
+          <button class="btn btn-primary" type="submit">Post assignment</button>
+        </form>
+      </div>
+      <div class="grid grid-2 mt-24" id="assignmentsGrid"></div>
+    </section>
+
+    <!-- HOD -->
+    <section id="view-hod" class="view hidden">
+      <div class="topbar"><div><h1>Department Overview</h1><div class="subtitle">Every teacher and student on record in your department.</div></div></div>
+      <div class="grid grid-2">
+        <div class="panel">
+          <div class="sheet-label">FIG. 14 — FACILITATORS</div>
+          <div class="table-wrap"><table><thead><tr><th>Name</th><th>ID</th></tr></thead><tbody id="hodTeachersBody"></tbody></table></div>
+        </div>
+        <div class="panel">
+          <div class="sheet-label">FIG. 15 — STUDENTS</div>
+          <div class="table-wrap"><table><thead><tr><th>Name</th><th>ID</th></tr></thead><tbody id="hodStudentsBody"></tbody></table></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANNOUNCEMENTS -->
+    <section id="view-announcements" class="view hidden">
+      <div class="topbar"><div><h1>Announcements</h1></div></div>
+      <div id="announcementsList"></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/teacher.js"></script>
+</body>
+</html>

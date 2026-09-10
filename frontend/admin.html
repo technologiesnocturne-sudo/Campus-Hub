@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Console — Campus Hub</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="mark">PC</div>
+      <div>
+        <div class="name">Campus OS</div>
+        <div class="role-tag">Administrator</div>
+      </div>
+    </div>
+
+    <nav class="nav-group">
+      <div class="nav-group-label">Overview</div>
+      <div class="nav-link active" data-view="dashboard">Dashboard</div>
+    </nav>
+    <nav class="nav-group">
+      <div class="nav-group-label">Records</div>
+      <div class="nav-link" data-view="register">Register Student / Teacher</div>
+      <div class="nav-link" data-view="users">All Users</div>
+      <div class="nav-link" data-view="departments">Departments</div>
+      <div class="nav-link" data-view="grades">All Grades</div>
+      <div class="nav-link" data-view="payments">Payments</div>
+    </nav>
+    <nav class="nav-group">
+      <div class="nav-group-label">Campus</div>
+      <div class="nav-link" data-view="announcements">Announcements</div>
+      <div class="nav-link" data-view="events">Events</div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div id="sidebarProfile" class="faint mt-8"></div>
+      <button class="btn btn-ghost btn-block mt-16" onclick="logout()">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view">
+      <div class="topbar"><div><h1>Admin Console</h1><div class="subtitle">System-wide snapshot.</div></div></div>
+      <div class="grid grid-4">
+        <div class="panel stat-tile"><div class="stat-label">Students</div><div class="stat-value accent" id="cStudents">—</div></div>
+        <div class="panel stat-tile"><div class="stat-label">Facilitators</div><div class="stat-value" id="cTeachers">—</div></div>
+        <div class="panel stat-tile"><div class="stat-label">Departments</div><div class="stat-value" id="cDepartments">—</div></div>
+        <div class="panel stat-tile"><div class="stat-label">Revenue (Vouchers)</div><div class="stat-value" id="cRevenue" style="font-size:22px">—</div></div>
+      </div>
+      <div class="grid grid-2 mt-24">
+        <div class="panel stat-tile"><div class="stat-label">Grades Recorded</div><div class="stat-value" id="cGrades">—</div></div>
+        <div class="panel stat-tile"><div class="stat-label">Vouchers Sold</div><div class="stat-value" id="cVouchers">—</div></div>
+      </div>
+    </section>
+
+    <!-- REGISTER -->
+    <section id="view-register" class="view hidden">
+      <div class="topbar"><div><h1>Register Student / Teacher</h1><div class="subtitle">Issues a system ID immediately. Share the initial password with the person directly.</div></div></div>
+      <div class="panel" style="max-width:520px">
+        <div class="role-picker" id="regRolePicker">
+          <div class="role-pill active" data-role="student">Student</div>
+          <div class="role-pill" data-role="teacher">Facilitator</div>
+        </div>
+        <form id="registerForm">
+          <div class="field"><label for="regName">Full name</label><input id="regName" required></div>
+          <div class="field"><label for="regEmail">Email</label><input id="regEmail" type="email" required></div>
+          <div class="field"><label for="regDept">Department</label><select id="regDept" required></select></div>
+          <div class="field" id="hodField" style="display:none">
+            <label class="flex gap-8" style="align-items:center"><input type="checkbox" id="regIsHod" style="width:auto"> Make Head of Department</label>
+          </div>
+          <div class="field"><label for="regPassword">Initial password</label><input id="regPassword" type="text" required minlength="8" placeholder="At least 8 characters"></div>
+          <button class="btn btn-primary btn-block" type="submit">Register &amp; issue ID</button>
+        </form>
+        <div id="registerResult" class="mt-16"></div>
+      </div>
+    </section>
+
+    <!-- USERS -->
+    <section id="view-users" class="view hidden">
+      <div class="topbar"><div><h1>All Users</h1></div></div>
+      <div class="panel">
+        <div class="flex gap-12 mt-8" style="margin-bottom:16px">
+          <select id="userFilterRole" style="max-width:180px">
+            <option value="">All roles</option>
+            <option value="student">Students</option>
+            <option value="teacher">Facilitators</option>
+            <option value="admin">Admins</option>
+          </select>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Name</th><th>ID</th><th>Role</th><th>Department</th><th>Email</th></tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- DEPARTMENTS -->
+    <section id="view-departments" class="view hidden">
+      <div class="topbar"><div><h1>Departments</h1></div></div>
+      <div class="grid grid-3" id="departmentsGrid"></div>
+    </section>
+
+    <!-- GRADES -->
+    <section id="view-grades" class="view hidden">
+      <div class="topbar"><div><h1>All Grades</h1><div class="subtitle">Most recent 200 entries, across every department.</div></div></div>
+      <div class="panel"><div class="table-wrap"><table>
+        <thead><tr><th>Student</th><th>ID</th><th>Subject</th><th>Term</th><th>Score</th><th>Grade</th></tr></thead>
+        <tbody id="allGradesBody"></tbody>
+      </table></div></div>
+    </section>
+
+    <!-- PAYMENTS -->
+    <section id="view-payments" class="view hidden">
+      <div class="topbar"><div><h1>Payments</h1></div></div>
+      <div class="panel"><div class="table-wrap"><table>
+        <thead><tr><th>Reference</th><th>Student</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody id="paymentsBody"></tbody>
+      </table></div></div>
+    </section>
+
+    <!-- ANNOUNCEMENTS -->
+    <section id="view-announcements" class="view hidden">
+      <div class="topbar"><div><h1>Announcements</h1></div></div>
+      <div class="panel" style="max-width:560px">
+        <div class="sheet-label">FIG. 16 — POST ANNOUNCEMENT</div>
+        <form id="announceForm">
+          <div class="field"><label for="anTitle">Title</label><input id="anTitle" required></div>
+          <div class="field"><label for="anBody">Message</label><textarea id="anBody" rows="3" required></textarea></div>
+          <div class="field"><label for="anAudience">Audience</label>
+            <select id="anAudience"><option value="all">Everyone</option><option value="students">Students only</option><option value="teachers">Facilitators only</option></select>
+          </div>
+          <button class="btn btn-primary" type="submit">Post announcement</button>
+        </form>
+      </div>
+      <div class="mt-24" id="announcementsList"></div>
+    </section>
+
+    <!-- EVENTS -->
+    <section id="view-events" class="view hidden">
+      <div class="topbar"><div><h1>Events</h1></div></div>
+      <div class="panel" style="max-width:560px">
+        <div class="sheet-label">FIG. 17 — SCHEDULE EVENT</div>
+        <form id="eventForm">
+          <div class="grid grid-2">
+            <div class="field"><label for="evTitle">Title</label><input id="evTitle" required></div>
+            <div class="field"><label for="evDate">Date</label><input id="evDate" type="date" required></div>
+          </div>
+          <div class="field"><label for="evDesc">Description</label><textarea id="evDesc" rows="2"></textarea></div>
+          <button class="btn btn-primary" type="submit">Add event</button>
+        </form>
+      </div>
+      <div class="mt-24" id="eventsList"></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

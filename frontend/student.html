@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Portal — Campus Hub</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="mark">PC</div>
+      <div>
+        <div class="name">Campus OS</div>
+        <div class="role-tag">Student</div>
+      </div>
+    </div>
+
+    <nav class="nav-group">
+      <div class="nav-group-label">Overview</div>
+      <div class="nav-link active" data-view="dashboard">Dashboard</div>
+    </nav>
+    <nav class="nav-group">
+      <div class="nav-group-label">Academics</div>
+      <div class="nav-link" data-view="grades">Grade Checker</div>
+      <div class="nav-link" data-view="attendance">Attendance</div>
+      <div class="nav-link" data-view="materials">Learning Material</div>
+      <div class="nav-link" data-view="assignments">Assignments</div>
+    </nav>
+    <nav class="nav-group">
+      <div class="nav-group-label">Campus</div>
+      <div class="nav-link" data-view="announcements">Announcements</div>
+      <div class="nav-link" data-view="events">Upcoming Events</div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div id="sidebarProfile" class="faint mt-8"></div>
+      <button class="btn btn-ghost btn-block mt-16" onclick="logout()">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view">
+      <div class="topbar">
+        <div>
+          <h1 id="welcomeTitle">Welcome back</h1>
+          <div class="subtitle">Here's where things stand today.</div>
+        </div>
+      </div>
+      <div class="grid grid-4">
+        <div class="panel stat-tile"><div class="stat-label">Student ID</div><div class="stat-value accent" id="statId" style="font-size:16px">—</div></div>
+        <div class="panel stat-tile"><div class="stat-label">Department</div><div class="stat-value" id="statDept" style="font-size:16px">—</div></div>
+        <div class="panel stat-tile"><div class="stat-label">Attendance Rate</div><div class="stat-value" id="statAttendance">—</div></div>
+        <div class="panel stat-tile"><div class="stat-label">Unused Vouchers</div><div class="stat-value" id="statVouchers">—</div></div>
+      </div>
+
+      <div class="grid grid-2 mt-24">
+        <div class="panel">
+          <div class="sheet-label">FIG. 04 — RECENT ANNOUNCEMENTS</div>
+          <div id="dashAnnouncements"></div>
+        </div>
+        <div class="panel">
+          <div class="sheet-label">FIG. 05 — UPCOMING EVENTS</div>
+          <div id="dashEvents"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRADE CHECKER -->
+    <section id="view-grades" class="view hidden">
+      <div class="topbar">
+        <div><h1>Grade Checker</h1><div class="subtitle">Pay for a voucher, then redeem the code to view your result sheet.</div></div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="panel">
+          <div class="sheet-label">FIG. 06 — BUY A VOUCHER</div>
+          <p class="dim">Each voucher unlocks one term's results. Payment is processed securely via Paystack.</p>
+          <div class="field mt-16">
+            <label for="voucherTerm">Term</label>
+            <select id="voucherTerm">
+              <option value="2026-S1">2026 — Semester 1</option>
+              <option value="2026-S2">2026 — Semester 2</option>
+              <option value="2025-S2">2025 — Semester 2</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-block" id="payBtn">Pay for voucher</button>
+          <div id="payStatus" class="mt-16"></div>
+        </div>
+
+        <div class="panel">
+          <div class="sheet-label">FIG. 07 — REDEEM VOUCHER</div>
+          <p class="dim">Already have a code? Enter it below to reveal your grade report.</p>
+          <div class="field mt-16">
+            <label for="voucherInput">Voucher code</label>
+            <input id="voucherInput" class="mono" placeholder="VC-XXXXXX-XXXXXX-XXXXXX">
+          </div>
+          <button class="btn btn-block" id="redeemBtn">Unlock grades</button>
+        </div>
+      </div>
+
+      <div class="panel mt-24" id="gradeReportPanel" style="display:none">
+        <div class="flex-between no-print">
+          <div class="sheet-label" style="margin-bottom:0">FIG. 08 — RESULT SHEET</div>
+          <button class="btn btn-sm" onclick="window.print()">Print</button>
+        </div>
+        <h2 id="gradeReportTerm" class="mt-16"></h2>
+        <div class="table-wrap mt-8">
+          <table>
+            <thead><tr><th>Subject</th><th>Score</th><th>Grade</th></tr></thead>
+            <tbody id="gradeReportBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel mt-24">
+        <div class="sheet-label">FIG. 09 — VOUCHER HISTORY</div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Code</th><th>Term</th><th>Status</th><th>Issued</th></tr></thead>
+          <tbody id="voucherHistoryBody"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE -->
+    <section id="view-attendance" class="view hidden">
+      <div class="topbar"><div><h1>Attendance</h1><div class="subtitle">Your marked attendance record, most recent first.</div></div></div>
+      <div class="panel">
+        <div class="table-wrap"><table>
+          <thead><tr><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="attendanceBody"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- MATERIALS -->
+    <section id="view-materials" class="view hidden">
+      <div class="topbar"><div><h1>Learning Material</h1><div class="subtitle">Uploaded by facilitators in your department.</div></div></div>
+      <div class="grid grid-2" id="materialsGrid"></div>
+    </section>
+
+    <!-- ASSIGNMENTS -->
+    <section id="view-assignments" class="view hidden">
+      <div class="topbar"><div><h1>Assignments</h1><div class="subtitle">Project work, assessments, and additional notes.</div></div></div>
+      <div class="grid grid-2" id="assignmentsGrid"></div>
+    </section>
+
+    <!-- ANNOUNCEMENTS -->
+    <section id="view-announcements" class="view hidden">
+      <div class="topbar"><div><h1>Announcements</h1></div></div>
+      <div id="announcementsList"></div>
+    </section>
+
+    <!-- EVENTS -->
+    <section id="view-events" class="view hidden">
+      <div class="topbar"><div><h1>Upcoming Events</h1></div></div>
+      <div id="eventsList"></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/student.js"></script>
+</body>
+</html>
