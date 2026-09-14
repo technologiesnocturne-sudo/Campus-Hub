@@ -1,13 +1,5 @@
 # Campus Hub — School Management SaaS
 
-A full-stack School Management System built from your `Project.md` / `Notes.md` / `departments.md`
-briefs: **Student**, **Facilitator/Teacher (incl. Head of Department)**, and **Administrator**
-roles, grade checking gated behind Paystack-purchased voucher codes, attendance, learning
-material, assignments, announcements/events, and spreadsheet grade import.
-
-- **Backend:** Node.js, Express, SQLite (via `better-sqlite3` — no separate database server to install)
-- **Frontend:** Vanilla HTML / CSS / JS (no build step, no framework)
-- **Payments:** Paystack (test mode works out of the box; falls back to a "simulate payment" dev flow if no live key is configured)
 
 ## 1. Install & run the backend
 
@@ -19,25 +11,18 @@ npm run seed               # loads the 14 departments + a default admin + demo a
 npm start                  # http://localhost:4000
 ```
 
-The seed script prints the default admin's login (from `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD`
-in `.env`, or `admin@school.edu.gh` / `ChangeMe123!` if left unset), plus two demo accounts:
-
 | Role      | Email                          | Password       |
 |-----------|---------------------------------|----------------|
 | Admin     | admin@school.edu.gh             | ChangeMe123!   |
 | Teacher (HOD, Computer Hardware & Software) | teacher.demo@school.edu.gh | Teacher123! |
 | Student (Computer Hardware & Software)      | student.demo@school.edu.gh | Student123! |
 
-**Change the seeded passwords before using this anywhere real.**
+
 
 ## 2. Serve the frontend
-
-The frontend is static — no build step. Easiest option, from the `frontend/` folder:
-
 ```bash
 cd frontend
 python3 -m http.server 5173
-# open http://localhost:5173
 ```
 
 (Any static file server works — `npx serve`, VS Code Live Server, nginx, etc.)
