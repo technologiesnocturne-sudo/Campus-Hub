@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Campus Hub — Sign In</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="shortcut icon" href="/frontend/campus.png" type="image/x-icon">
 </head>
 <body>
 
@@ -23,7 +24,7 @@
     </svg>
 
     <div class="hero-brand">
-      <div class="mark">PC</div>
+      <div class="mark"></div>
       <div>
         <div class="name">Campus Hub</div>
         <div class="tagline">Student · Facilitator · Admin Portal</div>
@@ -118,8 +119,6 @@
     });
   });
 
-  // Role picker for login (informational — backend derives role from the account itself,
-  // this just routes to the right dashboard after a successful login)
   let selectedLoginRole = 'student';
   document.querySelectorAll('#loginRolePicker .role-pill').forEach((pill) => {
     pill.addEventListener('click', () => {
