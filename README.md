@@ -5,10 +5,10 @@
 
 ```bash
 cd backend
-cp .env.example .env      # then edit .env — at minimum set JWT_SECRET
+cp .env.example .env      
 npm install
-npm run seed               # loads the 14 departments + a default admin + demo accounts
-npm start                  # http://localhost:4000
+npm run seed               
+npm start                  
 ```
 
 | Role      | Email                          | Password       |
